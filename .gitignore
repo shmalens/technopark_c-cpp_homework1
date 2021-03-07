@@ -1,1 +1,6 @@
+#executable files
 *.out
+
+#local files for comfortable modifying
+travis.yml
+gitignore
