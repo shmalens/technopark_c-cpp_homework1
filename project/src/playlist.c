@@ -20,6 +20,38 @@ static playlist_t *delete_incomplete_playlist(playlist_t *playlist, int len) {
     return NULL;
 }
 
+static int fill_playlist(FILE *fd, playlist_t *new_playlist) {
+    // Читаем композиции
+    for (int i = 0; i < new_playlist->len; ++i) {
+        char title[MAX_TITLE_LEN];
+        if(fgets(title, MAX_TITLE_LEN, fd) == NULL) {
+            return i;
+        }
+        // Убираем \n в конце строки и получаем длину
+        size_t title_len = strlen(title);
+        title[title_len - 1] = '\0';
+
+        duration_t duration;
+        if(fscanf(fd, "%d%*c%d%*c%d\n", &duration.hour, &duration.min, &duration.sec) == 0) {
+            return i;
+        }
+        duration.general_seconds = duration.hour * HOUR_MULTIPLIER + duration.min * MIN_MULTIPLIER + duration.sec;
+
+        unsigned int bpm;
+        if(fscanf(fd, "%d\n", &bpm) == 0) {
+            return i;
+        }
+
+        // Добавляем в плейлист
+        new_playlist->playlist[i] = create_composition(title, title_len, duration, bpm);
+        if (new_playlist->playlist[i] == NULL) {
+            return i;
+        }
+    }
+
+    return 0;
+}
+
 playlist_t *create_playlist(FILE *fd) {
     if (fd == NULL) {
         return NULL;
@@ -42,32 +74,9 @@ playlist_t *create_playlist(FILE *fd) {
         return delete_incomplete_playlist(new_playlist, 0);
     }
 
-    // Читаем композиции
-    for (int i = 0; i < new_playlist->len; ++i) {
-        char title[MAX_TITLE_LEN];
-        if(fgets(title, MAX_TITLE_LEN, fd) == NULL) {
-            return delete_incomplete_playlist(new_playlist, i);
-        }
-        // Убираем \n в конце строки и получаем длину
-        size_t title_len = strlen(title);
-        title[title_len - 1] = '\0';
-
-        duration_t duration;
-        if(fscanf(fd, "%d%*c%d%*c%d\n", &duration.hour, &duration.min, &duration.sec) == 0) {
-            return delete_incomplete_playlist(new_playlist, i);
-        }
-        duration.general_seconds = duration.hour * HOUR_MULTIPLIER + duration.min * MIN_MULTIPLIER + duration.sec;
-
-        unsigned int bpm;
-        if(fscanf(fd, "%d\n", &bpm) == 0) {
-            return delete_incomplete_playlist(new_playlist, i);
-        }
-
-        // Добавляем в плейлист
-        new_playlist->playlist[i] = create_composition(title, title_len, duration, bpm);
-        if (new_playlist->playlist[i] == NULL) {
-            return delete_incomplete_playlist(new_playlist, i);
-        }
+    int err = fill_playlist(fd, new_playlist);
+    if (err != 0) {
+        return delete_incomplete_playlist(new_playlist, err);
     }
 
     return new_playlist;
@@ -99,3 +108,4 @@ int print_playlist(playlist_t *playlist) {
     }
     return bytes_written;
 }
+
