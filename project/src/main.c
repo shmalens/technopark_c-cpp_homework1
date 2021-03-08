@@ -2,9 +2,12 @@
 
 #include "composition.h"
 #include "playlist.h"
+#include "dataloader.h"
+
+#define PATH "./data/compositions.txt"
 
 int main() {
-    composition_t *composition = create_composition("DDT", 4, 235, 80);
+    /*composition_t *composition = create_composition("DDT", 4, 235, 80);
     if (composition == NULL) {
         return -1;
     }
@@ -17,11 +20,25 @@ int main() {
 
     add_composition(playlist, composition);
     add_composition(playlist, composition);
+    add_composition(playlist, composition);
+    add_composition(playlist, composition);
 
-    print_composition(playlist->compositions[playlist->len - 1]);
-    print_composition(playlist->compositions[playlist->len - 2]);
+    print_playlist(playlist);
 
     delete_composition(composition);
-    delete_playlist(playlist);
+    delete_playlist(playlist);*/
+
+    FILE *fd = fopen(PATH, "r");
+
+    playlist_t *tmp = read_data(fd);
+    if (tmp == NULL) {
+        fclose(fd);
+        return -1;
+    }
+
+    print_playlist(tmp);
+
+    fclose(fd);
+    delete_playlist(tmp);
     return 0;
 };

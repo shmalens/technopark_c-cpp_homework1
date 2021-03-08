@@ -59,7 +59,7 @@ int add_composition(playlist_t *playlist, composition_t *composition) {
     if (playlist->len == playlist->capacity) {
         composition_t **resized = resize_playlist(playlist->compositions, &(playlist->capacity));
         if (resized == NULL) {
-            return -1;
+            return -2;
         }
 
         playlist->compositions = resized;
@@ -67,11 +67,23 @@ int add_composition(playlist_t *playlist, composition_t *composition) {
 
     composition_t *new_composition = composition_cpy(composition);
     if (new_composition == NULL) {
-        return -1;
+        return -3;
     }
 
     playlist->compositions[playlist->len] = new_composition;
     playlist->len += 1;
+
+    return 0;
+}
+
+int print_playlist(playlist_t *playlist) {
+    if (playlist == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < playlist->len; ++i) {
+        print_composition(playlist->compositions[i]);
+    }
 
     return 0;
 }

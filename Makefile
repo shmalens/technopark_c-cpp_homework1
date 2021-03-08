@@ -5,11 +5,13 @@ INCLUDE = ./project/include
 
 SRC = $(SRC_DIR)/src/main.c\
       $(SRC_DIR)/src/composition.c\
-      $(SRC_DIR)/src/playlist.c
+      $(SRC_DIR)/src/playlist.c\
+      $(SRC_DIR)/src/dataloader.c
 
 ALL_FILES = $(SRC)\
             $(INCLUDE)/composition.h\
             $(INCLUDE)/playlist.h\
+            $(INCLUDE)/dataloader.h
 
 VALGRIND_OPIONS = -s --tool=memcheck --leak-check=full --track-origins=yes  --show-leak-kinds=all
 COMPILER_OPTIONS = -Wall -O0 -ggdb3 -Wextra -Werror
