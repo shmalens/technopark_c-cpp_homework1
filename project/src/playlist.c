@@ -1,84 +1,25 @@
-#include <stdio.h>
-#include <malloc.h>
-#include <string.h>
+#include <stdlib.h>
 
-#include "playlist.h"
 #include "composition.h"
+#include "playlist.h"
 
-static playlist_t *delete_incomplete_playlist(playlist_t *playlist, int len) {
-    if (playlist == NULL) {
-        return NULL;
-    }
-
-    for (int j = 0; j < len; ++j) {
-        delete_composition(playlist->playlist[j]);
-        playlist->playlist[j] = NULL;
-    }
-    free(playlist->playlist);
-    free(playlist);
-    playlist = NULL;
-    return NULL;
-}
-
-static int fill_playlist(FILE *fd, playlist_t *new_playlist) {
-    // Читаем композиции
-    for (int i = 0; i < new_playlist->len; ++i) {
-        char title[MAX_TITLE_LEN];
-        if(fgets(title, MAX_TITLE_LEN, fd) == NULL) {
-            return i;
-        }
-        // Убираем \n в конце строки и получаем длину
-        size_t title_len = strlen(title);
-        title[title_len - 1] = '\0';
-
-        duration_t duration;
-        if(fscanf(fd, "%d%*c%d%*c%d\n", &duration.hour, &duration.min, &duration.sec) == 0) {
-            return i;
-        }
-        duration.general_seconds = duration.hour * HOUR_MULTIPLIER + duration.min * MIN_MULTIPLIER + duration.sec;
-
-        unsigned int bpm;
-        if(fscanf(fd, "%d\n", &bpm) == 0) {
-            return i;
-        }
-
-        // Добавляем в плейлист
-        new_playlist->playlist[i] = create_composition(title, title_len, duration, bpm);
-        if (new_playlist->playlist[i] == NULL) {
-            return i;
-        }
-    }
-
-    return 0;
-}
-
-playlist_t *create_playlist(FILE *fd) {
-    if (fd == NULL) {
-        return NULL;
-    }
-
-    // Читаем кол-во композиций в файле
-    int playlist_length;
-    if (fscanf(fd, "%d\n", &playlist_length) == 0) {
-        return NULL;
-    }
-
-    // Выделяем память под плейлист, задаем ему длину и память под его композиции
+playlist_t *create_playlist(size_t start_capacity) {
     playlist_t *new_playlist = malloc(sizeof(playlist_t));
     if (new_playlist == NULL) {
         return NULL;
     }
-    new_playlist->len = playlist_length;
-    new_playlist->playlist = malloc(sizeof(composition_t) * playlist_length);
-    if (new_playlist->playlist == NULL) {
-        return delete_incomplete_playlist(new_playlist, 0);
+
+    if (start_capacity == 0) {
+        start_capacity += 1;
     }
 
-    int err = fill_playlist(fd, new_playlist);
-    if (err != 0) {
-        return delete_incomplete_playlist(new_playlist, err);
+    new_playlist->compositions = malloc(sizeof(composition_t *) * (start_capacity));
+    if (new_playlist->compositions == NULL) {
+        free(new_playlist);
+        return NULL;
     }
-
+    new_playlist->capacity = start_capacity;
+    new_playlist->len = 0;
     return new_playlist;
 }
 
@@ -87,25 +28,50 @@ int delete_playlist(playlist_t *playlist) {
         return -1;
     }
 
-    for (int i = 0; i < playlist->len; ++i) {
-        delete_composition(playlist->playlist[i]);
-    }
-    free(playlist->playlist);
-    free(playlist);
 
-    playlist = NULL;
+    for (size_t i = 0; i < playlist->len; ++i) {
+        delete_composition(playlist->compositions[i]);
+    }
+
+    free(playlist->compositions);
+    free(playlist);
     return 0;
 }
 
-int print_playlist(playlist_t *playlist) {
-    if (playlist == NULL) {
+static composition_t **resize_playlist(composition_t **src, size_t *capacity) {
+    if (src == NULL) {
+        return NULL;
+    }
+
+    composition_t **new_compositions = realloc(src, sizeof(composition_t *) * (*capacity * 2));
+    if (new_compositions == NULL) {
+        return NULL;
+    }
+    *capacity *= 2;
+    return new_compositions;
+}
+
+int add_composition(playlist_t *playlist, composition_t *composition) {
+    if (playlist == NULL || composition == NULL) {
         return -1;
     }
 
-    int bytes_written = 0;
-    for (int i = 0; i < playlist->len; ++i) {
-        bytes_written += print_composition(playlist->playlist[i]);
-    }
-    return bytes_written;
-}
+    if (playlist->len == playlist->capacity) {
+        composition_t **resized = resize_playlist(playlist->compositions, &(playlist->capacity));
+        if (resized == NULL) {
+            return -1;
+        }
 
+        playlist->compositions = resized;
+    }
+
+    composition_t *new_composition = composition_cpy(composition);
+    if (new_composition == NULL) {
+        return -1;
+    }
+
+    playlist->compositions[playlist->len] = new_composition;
+    playlist->len += 1;
+
+    return 0;
+}

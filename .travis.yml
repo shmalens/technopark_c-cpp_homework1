@@ -1,6 +1,6 @@
 language: c
 compiler: gcc
-script: make && make memcheck
+script: make && make memcheck && make staticcheck
 
 env:
   - VALGRIND_OPTS='--tool=memcheck --leak-check=full  --show-leak-kinds=all'
