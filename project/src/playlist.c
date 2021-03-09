@@ -30,7 +30,9 @@ int delete_playlist(playlist_t *playlist) {
 
 
     for (size_t i = 0; i < playlist->len; ++i) {
-        delete_composition(playlist->compositions[i]);
+        if (playlist->compositions[i] != NULL) {
+            delete_composition(playlist->compositions[i]);
+        }
     }
 
     free(playlist->compositions);

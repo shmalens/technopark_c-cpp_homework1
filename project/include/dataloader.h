@@ -5,7 +5,10 @@
 #include "playlist.h"
 
 #define MAX_TITLE_SIZE 100
+#define MIN_MULTIPLIER 60
+#define HOUR_MULTIPLIER 3600
 
 playlist_t *read_data(FILE *fd);
+int get_user_input(size_t *len, size_t *duration, unsigned int *bpm);
 
 #endif //DATALOADER_H
