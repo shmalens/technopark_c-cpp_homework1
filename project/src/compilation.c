@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "compilation.h"
 #include "composition.h"
@@ -54,15 +53,26 @@ playlist_t * gen_compilation(playlist_t *src, size_t amount, int seed) {
     srandom(seed);
 
     playlist_t *compilation = create_playlist(amount);
+    if (compilation == NULL) {
+        return NULL;
+    }
+
+    playlist_t *src_copy = copy_playlist(src);
+    if (src_copy == NULL) {
+        delete_playlist(compilation);
+        return NULL;
+    }
+
     for (size_t i = 0; i < amount; ) {
-        unsigned long index = random() % src->len;
-        if (src->compositions[index] != NULL) {
-            add_composition(compilation, src->compositions[index]);
-            delete_composition(src->compositions[index]);
-            src->compositions[index] = NULL;
+        unsigned long index = random() % src_copy->len;
+        if (src_copy->compositions[index] != NULL) {
+            add_composition(compilation, src_copy->compositions[index]);
+            delete_composition(src_copy->compositions[index]);
+            src_copy->compositions[index] = NULL;
             ++i;
         }
     }
 
+    delete_playlist(src_copy);
     return compilation;
 }

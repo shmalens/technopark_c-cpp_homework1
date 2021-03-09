@@ -89,3 +89,22 @@ int print_playlist(playlist_t *playlist) {
 
     return 0;
 }
+
+playlist_t *copy_playlist(playlist_t *src) {
+    if (src == NULL) {
+        return NULL;
+    }
+
+    playlist_t *copy = create_playlist(src->capacity);
+    copy->capacity = src->capacity;
+    copy->len = src->len;
+    for (size_t i = 0; i < src->len; ++i) {
+        copy->compositions[i] = composition_cpy(src->compositions[i]);
+        if (copy->compositions[i] == NULL) {
+            delete_playlist(copy);
+            return NULL;
+        }
+    }
+
+    return copy;
+}

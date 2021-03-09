@@ -28,7 +28,7 @@ int main() {
     print_playlist(s_tmp);
 
     printf("---------------------------------\n");
-    playlist_t *c_tmp = gen_compilation(s_tmp, 12, 7);
+    playlist_t *c_tmp = gen_compilation(s_tmp, 4, 1);
     if (c_tmp == NULL) {
         fclose(fd);
         delete_playlist(tmp);
@@ -40,8 +40,8 @@ int main() {
 
     fclose(fd);
     delete_playlist(tmp);
-    delete_playlist(s_tmp);
     delete_playlist(c_tmp);
+    delete_playlist(s_tmp);
 
 
     return 0;
