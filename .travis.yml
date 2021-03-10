@@ -1,12 +1,10 @@
-language: c
-compiler: gcc
-script: make && make check
+os: linux
+compiler:
+    -gcc
+    -clang
 
-env:
-  - VALGRIND_OPTS='--tool=memcheck --leak-check=full  --show-leak-kinds=all'
-
-addons:
-  apt:
-    packages:
-      - valgrind
-      - cppcheck
+script:
+    -mkdir build
+    -cd build
+    -cmake ..
+    -make
