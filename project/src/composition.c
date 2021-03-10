@@ -40,7 +40,7 @@ int print_composition(composition_t *composition) {
     }
 
     printf("Title: %s\n", composition->title.title);
-    printf("Duration: %lu\n", composition->duration);
+    printf("Duration: %lu\n", (unsigned long)composition->duration);
     printf("BPM: %u\n", composition->bpm);
     return 0;
 }

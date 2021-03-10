@@ -1,9 +1,12 @@
 os: linux
 compiler:
     - gcc
-    - clang
+
+install:
+    --sudo apt install cppcheck
 
 script:
+    - ./run_cppcheck.sh
     - mkdir build
     - cd build
     - cmake ..

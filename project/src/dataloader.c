@@ -18,7 +18,7 @@ static composition_t *read_comp_data(FILE *fd) {
     title_len = strlen(title_buffer);
     title_buffer[title_len - 1] = '\0';
 
-    size_t duration;
+    unsigned long duration;
     if (fscanf(fd, "%lu\n", &duration) == 0) {
         return NULL;
     }
