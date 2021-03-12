@@ -6,8 +6,7 @@ set(TARGET compilation)
 
 # Выставляем флаги компилятора и проч инфу для компилятора
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O0 -ggdb3 -Wextra -Werror")
-
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_GLIBC_DEBUG -D_GLIBC_DEBUG_PEDANTIC -Wall -O0 -ggdb3 -Wextra -Werror -Wshadow")
 set(PROJECT_SOURCE_DIR project)
 
 # Создаем таргет, указываем для него мейн
@@ -26,8 +25,9 @@ add_library(hw_lib STATIC ${SRC}/compilation.c
 # Подключаем библиотеку к цели
 target_link_libraries(${TARGET} hw_lib)
 
-# Тут происходит конфигурация тетов, 
+# Тут происходит конфигурация тетов,
 # они подтягиваются с гита, для этого нужен CMakeLists.txt.in
+
 configure_file(CMakeLists.txt.in
         googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .

@@ -12,3 +12,5 @@ script:
     - cmake ..
     - make
     - ctest
+    - cd ..
+    - ./run_valgrind.sh

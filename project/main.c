@@ -5,6 +5,7 @@
 #include "dataloader.h"
 #include "compilation.h"
 
+#define USER_INPUT "./data/user_input.txt"
 #define PATH "./data/compositions.txt"
 #define SEED 6339
 
@@ -15,20 +16,28 @@ int main() {
         return -1;
     }
 
+    FILE *fd_input = fopen(USER_INPUT, "r");
+    if (fd_input == NULL) {
+        fclose(fd);
+        return -1;
+    }
+
     playlist_t *all_composition = read_data(fd);
     if (all_composition == NULL) {
         fprintf(stderr, "Error reading playlist from file\n");
         fclose(fd);
+        fclose(fd_input);
         return -1;
     }
 
     size_t amount;
     size_t duration;
     unsigned int bpm;
-    if (get_user_input(stdin, &amount, &duration, &bpm) != 0) {
+    if (get_user_input(fd_input, &amount, &duration, &bpm) != 0) {
         fprintf(stderr, "Data entry error\n");
         delete_playlist(all_composition);
         fclose(fd);
+        fclose(fd_input);
         return -1;
     }
 
@@ -37,6 +46,7 @@ int main() {
         fprintf(stderr, "Unable to create playlist\n");
         delete_playlist(all_composition);
         fclose(fd);
+        fclose(fd_input);
         return -1;
     }
 
@@ -46,6 +56,7 @@ int main() {
         fclose(fd);
         delete_playlist(all_composition);
         delete_playlist(suitable_compositions);
+        fclose(fd_input);
         return -1;
     }
 
@@ -53,6 +64,7 @@ int main() {
     print_playlist(stdout, result_compilation);
 
     fclose(fd);
+    fclose(fd_input);
     delete_playlist(all_composition);
     delete_playlist(suitable_compositions);
     delete_playlist(result_compilation);
