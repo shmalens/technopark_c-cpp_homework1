@@ -2,6 +2,12 @@ os: linux
 compiler:
     - gcc
 
+r_check_args: '--use-valgrind'
+addons:
+    apt:
+        packages:
+            - valgrind
+
 install:
     - sudo apt-get install -qq cppcheck
 

@@ -27,7 +27,6 @@ target_link_libraries(${TARGET} hw_lib)
 
 # Тут происходит конфигурация тетов,
 # они подтягиваются с гита, для этого нужен CMakeLists.txt.in
-
 configure_file(CMakeLists.txt.in
         googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
