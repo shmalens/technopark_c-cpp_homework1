@@ -34,14 +34,18 @@ int delete_composition(composition_t *composition) {
     return 0;
 }
 
-int print_composition(composition_t *composition) {
+int print_composition(FILE *fd, composition_t *composition) {
     if (composition == NULL) {
         return -1;
     }
 
-    printf("Title: %s\n", composition->title.title);
-    printf("Duration: %lu\n", (unsigned long)composition->duration);
-    printf("BPM: %u\n", composition->bpm);
+    if (fd == NULL) {
+        return -1;
+    }
+
+    fprintf(fd, "Title: %s\n", composition->title.title);
+    fprintf(fd, "Duration: %lu\n", (unsigned long)composition->duration);
+    fprintf(fd, "BPM: %u\n", composition->bpm);
     return 0;
 }
 

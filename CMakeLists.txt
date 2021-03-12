@@ -18,10 +18,10 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 set(SRC ${PROJECT_SOURCE_DIR}/src)
 
 # Теперь делаем статическую библиотеку со всеми сорсами
-add_library(hw_lib STATIC ${SRC}/compilation.c  
-                          ${SRC}/composition.c  
-                          ${SRC}/dataloader.c 
-                          ${SRC}/playlist.c)
+add_library(hw_lib STATIC ${SRC}/compilation.c
+        ${SRC}/composition.c
+        ${SRC}/dataloader.c
+        ${SRC}/playlist.c)
 
 # Подключаем библиотеку к цели
 target_link_libraries(${TARGET} hw_lib)
@@ -31,9 +31,9 @@ target_link_libraries(${TARGET} hw_lib)
 configure_file(CMakeLists.txt.in
         googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
 execute_process(COMMAND ${CMAKE_COMMAND} --build .
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
 
 add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
         ${CMAKE_BINARY_DIR}/googletest-build)
@@ -41,13 +41,13 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
 # Включаем тестирование для этого каталога
 enable_testing()
 
-set(TEST_NAME tests_gtest)
+file(GLOB test_source test/composition.cpp test/playlist.cpp test/dataloader.cpp test/compilation.cpp)
 
-# Создаем таргет на тесты
-add_executable(tests_gtest test/${TEST_NAME}.cpp)
-# Теперь подключаем гуглотесты к их таргету
-target_link_libraries(${TEST_NAME} gtest_main)
-# Теперь подключаем тестируемые функции к таргету тестов
-target_link_libraries(${TEST_NAME} hw_lib)
-# Создаем тест
-add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+foreach(file ${test_source})
+    set(name)
+    get_filename_component(name ${file} NAME_WE)
+    add_executable("${name}_tests" ${file})
+    target_link_libraries("${name}_tests" gtest_main)
+    target_link_libraries("${name}_tests" hw_lib)
+    add_test(NAME ${name} COMMAND "${name}_tests")
+endforeach()

@@ -33,8 +33,6 @@ playlist_t *search(playlist_t *src, size_t limit, unsigned int bpm_limit) {
         return NULL;
     }
 
-
-
     playlist_t *search_res = create_playlist(0);
     for (size_t i = 0; i < src->len; ++i) {
         if (check_composition(src->compositions[i], limit, bpm_limit)) {
@@ -46,6 +44,10 @@ playlist_t *search(playlist_t *src, size_t limit, unsigned int bpm_limit) {
 }
 
 playlist_t * gen_compilation(playlist_t *src, size_t amount, int seed) {
+    if (src == NULL) {
+        return NULL;
+    }
+
     if (src->len < amount) {
         return NULL;
     }

@@ -25,7 +25,7 @@ int main() {
     size_t amount;
     size_t duration;
     unsigned int bpm;
-    if (get_user_input(&amount, &duration, &bpm) != 0) {
+    if (get_user_input(stdin, &amount, &duration, &bpm) != 0) {
         fprintf(stderr, "Data entry error\n");
         delete_playlist(all_composition);
         fclose(fd);
@@ -50,7 +50,7 @@ int main() {
     }
 
     printf("Final selection\n");
-    print_playlist(result_compilation);
+    print_playlist(stdout, result_compilation);
 
     fclose(fd);
     delete_playlist(all_composition);

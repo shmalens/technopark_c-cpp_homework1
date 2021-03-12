@@ -71,14 +71,18 @@ playlist_t *read_data(FILE *fd) {
     return new_playlist;
 }
 
-int get_user_input(size_t *len, size_t *duration, unsigned int *bpm) {
+int get_user_input(FILE *fd, size_t *len, size_t *duration, unsigned int *bpm) {
+    if (fd == NULL) {
+        return -1;
+    }
+
     if (duration == NULL || bpm == NULL || len == NULL) {
         return -1;
     }
 
     long buf_len;
     printf("Enter length of compilation (The number is greater than zero): ");
-    int err = fscanf(stdin, "%ld", &buf_len);
+    int err = fscanf(fd, "%ld\n", &buf_len);
     if (err < 1 || buf_len <= 0) {
         return -1;
     }
@@ -88,7 +92,7 @@ int get_user_input(size_t *len, size_t *duration, unsigned int *bpm) {
     long buf_min;
     long buf_sec;
     printf("Enter duration (Usage hh:mm:ss, the numbers is greater than zero): ");
-    err = fscanf(stdin, "%ld%*c%ld%*c%ld", &buf_hour, &buf_min, &buf_sec);
+    err = fscanf(fd, "%ld%*c%ld%*c%ld\n", &buf_hour, &buf_min, &buf_sec);
     if (err < 3 || buf_hour < 0 || buf_min < 0 || buf_min > 60 || buf_sec < 0 || buf_sec > 60) {
         return -1;
     }
@@ -96,7 +100,7 @@ int get_user_input(size_t *len, size_t *duration, unsigned int *bpm) {
 
     int buf_bpm;
     printf("Enter tempo (The number is greater than zero): ");
-    err = fscanf(stdin, "%d", &buf_bpm);
+    err = fscanf(fd, "%d", &buf_bpm);
     if (err < 1 || buf_bpm < 0) {
         return -1;
     }

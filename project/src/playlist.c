@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "composition.h"
 #include "playlist.h"
@@ -78,13 +79,17 @@ int add_composition(playlist_t *playlist, composition_t *composition) {
     return 0;
 }
 
-int print_playlist(playlist_t *playlist) {
+int print_playlist(FILE *fd, playlist_t *playlist) {
     if (playlist == NULL) {
         return -1;
     }
 
+    if (fd == NULL) {
+        return -1;
+    }
+
     for (size_t i = 0; i < playlist->len; ++i) {
-        print_composition(playlist->compositions[i]);
+        print_composition(fd, playlist->compositions[i]);
     }
 
     return 0;
