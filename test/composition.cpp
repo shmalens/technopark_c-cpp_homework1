@@ -16,7 +16,7 @@ private:
 
 public:
     Composition_Tester();
-    composition_t get_comp() {return test_composition;}
+    composition_t get_comp() const {return test_composition;}
 };
 
 Composition_Tester::Composition_Tester() : test_title(TEST_TITLE) {
