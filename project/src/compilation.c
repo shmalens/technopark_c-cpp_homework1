@@ -36,7 +36,10 @@ playlist_t *search(playlist_t *src, size_t limit, unsigned int bpm_limit) {
     playlist_t *search_res = create_playlist(0);
     for (size_t i = 0; i < src->len; ++i) {
         if (check_composition(src->compositions[i], limit, bpm_limit)) {
-            add_composition(search_res, src->compositions[i]);
+            if (add_composition(search_res, src->compositions[i])) {
+                delete_playlist(search_res);
+                return NULL;
+            }
         }
     }
 
@@ -44,7 +47,7 @@ playlist_t *search(playlist_t *src, size_t limit, unsigned int bpm_limit) {
 }
 
 playlist_t * gen_compilation(playlist_t *src, size_t amount, int seed) {
-    if (src == NULL) {
+    if (src == NULL || src->compositions == NULL || src->len == 0) {
         return NULL;
     }
 
@@ -68,7 +71,11 @@ playlist_t * gen_compilation(playlist_t *src, size_t amount, int seed) {
     for (size_t i = 0; i < amount; ) {
         unsigned long index = random() % src_copy->len;
         if (src_copy->compositions[index] != NULL) {
-            add_composition(compilation, src_copy->compositions[index]);
+            if (add_composition(compilation, src_copy->compositions[index]) != 0) {
+                delete_playlist(compilation);
+                delete_playlist(src_copy);
+                return NULL;
+            }
             delete_composition(src_copy->compositions[index]);
             src_copy->compositions[index] = NULL;
             ++i;

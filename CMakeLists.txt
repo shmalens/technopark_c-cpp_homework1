@@ -6,7 +6,7 @@ set(TARGET compilation)
 
 # Выставляем флаги компилятора и проч инфу для компилятора
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_GLIBC_DEBUG -D_GLIBC_DEBUG_PEDANTIC -Wall -O0 -ggdb3 -Wextra -Werror -Wshadow")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O0 -ggdb3 -Wextra -Werror -Wshadow")
 set(PROJECT_SOURCE_DIR project)
 
 # Создаем таргет, указываем для него мейн
@@ -46,6 +46,7 @@ foreach(file ${test_source})
     set(name)
     get_filename_component(name ${file} NAME_WE)
     add_executable("${name}_tests" ${file})
+    target_compile_options("${name}_tests" PUBLIC "--coverage")
     target_link_libraries("${name}_tests" gtest_main)
     target_link_libraries("${name}_tests" hw_lib)
     add_test(NAME ${name} COMMAND "${name}_tests")

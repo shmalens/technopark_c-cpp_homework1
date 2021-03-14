@@ -39,9 +39,8 @@ TEST(PlaylistTest, Add_OK) {
 TEST(PlaylistTest, Add_Err) {
     playlist_t playlist;
 
-    ASSERT_EQ(add_composition(&playlist, NULL), -1);
-    ASSERT_EQ(add_composition(NULL, &comp), -1);
-    ASSERT_EQ(add_composition(NULL, NULL), -1);
+    ASSERT_EQ(add_composition(&playlist, NULL), EMPTY_COMPOSITION_POINTER);
+    ASSERT_EQ(add_composition(NULL, &comp), EMPTY_PLAYLIST_POINTER);
 }
 
 TEST(PlaylistTest, Copy_OK) {

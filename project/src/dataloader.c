@@ -73,18 +73,26 @@ playlist_t *read_data(FILE *fd) {
 
 int get_user_input(FILE *fd, size_t *len, size_t *duration, unsigned int *bpm) {
     if (fd == NULL) {
-        return -1;
+        return EMPTY_FILE_POINTER;
     }
 
-    if (duration == NULL || bpm == NULL || len == NULL) {
-        return -1;
+    if (duration == NULL) {
+        return EMPTY_DURATION_POINTER;
+    }
+
+    if (bpm == NULL) {
+        return EMPTY_BPM_POINTER;
+    }
+
+    if (len == NULL) {
+        return EMPTY_LEN_POINTER;
     }
 
     long buf_len;
     printf("Enter length of compilation (The number is greater than zero): ");
     int err = fscanf(fd, "%ld", &buf_len);
     if (err < 1 || buf_len <= 0) {
-        return -1;
+        return WRONG_COMPILATION_LEN;
     }
     *len = buf_len;
 
@@ -94,7 +102,7 @@ int get_user_input(FILE *fd, size_t *len, size_t *duration, unsigned int *bpm) {
     printf("Enter duration (Usage hh:mm:ss, the numbers is greater than zero): ");
     err = fscanf(fd, "%ld%*c%ld%*c%ld", &buf_hour, &buf_min, &buf_sec);
     if (err < 3 || buf_hour < 0 || buf_min < 0 || buf_min > 60 || buf_sec < 0 || buf_sec > 60) {
-        return -1;
+        return WRONG_DURATION_INPUT;
     }
     *duration = (size_t) buf_hour * HOUR_MULTIPLIER + buf_min * MIN_MULTIPLIER + buf_sec;
 
@@ -102,7 +110,7 @@ int get_user_input(FILE *fd, size_t *len, size_t *duration, unsigned int *bpm) {
     printf("Enter tempo (The number is greater than zero): ");
     err = fscanf(fd, "%d", &buf_bpm);
     if (err < 1 || buf_bpm < 0) {
-        return -1;
+        return WRONG_BPM_INPUT;
     }
     *bpm = buf_bpm;
 

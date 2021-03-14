@@ -18,7 +18,7 @@ extern "C" {
 
 TEST(DataLoader, ReadData_OK) {
     FILE *fd = fopen(DATA_PATH_OK, "r");
-    EXPECT_TRUE(fd);
+    ASSERT_TRUE(fd);
 
     const int expected_len = 10;
     playlist_t *playlist = read_data(fd);
@@ -45,7 +45,7 @@ TEST(DataLoader, ReadData_OK) {
 
 TEST(DataLoader, ReadData_Err) {
     FILE *fd = fopen(DATA_PATH_ERR, "r");
-    EXPECT_TRUE(fd);
+    ASSERT_TRUE(fd);
 
     playlist_t *playlist = read_data(fd);
 
@@ -56,7 +56,7 @@ TEST(DataLoader, ReadData_Err) {
 
 TEST(DataLoader, UserInput_OK) {
     FILE *fd = fopen(USER_INPUT_OK_PATH, "r");
-    EXPECT_TRUE(fd);
+    ASSERT_TRUE(fd);
 
     size_t len;
     size_t duration;
@@ -72,25 +72,24 @@ TEST(DataLoader, UserInput_Err) {
     size_t len;
     size_t duration;
     unsigned int bpm;
-    ASSERT_EQ(get_user_input(NULL, &len, &duration, &bpm), -1);
-    ASSERT_EQ(get_user_input(stdin, NULL, &duration, &bpm), -1);
-    ASSERT_EQ(get_user_input(stdin, &len, NULL, &bpm), -1);
-    ASSERT_EQ(get_user_input(stdin, &len, &duration, NULL), -1);
-    ASSERT_EQ(get_user_input(NULL, NULL, NULL, NULL), -1);
+    ASSERT_EQ(get_user_input(NULL, &len, &duration, &bpm), EMPTY_FILE_POINTER);
+    ASSERT_EQ(get_user_input(stdin, NULL, &duration, &bpm), EMPTY_LEN_POINTER);
+    ASSERT_EQ(get_user_input(stdin, &len, NULL, &bpm), EMPTY_DURATION_POINTER);
+    ASSERT_EQ(get_user_input(stdin, &len, &duration, NULL), EMPTY_BPM_POINTER);
 
     FILE *fd = fopen(USER_INPUT_ERR1_PATH, "r");
-    EXPECT_TRUE(fd);
-    ASSERT_EQ(get_user_input(fd, &len, &duration, &bpm), -1);
+    ASSERT_TRUE(fd);
+    ASSERT_EQ(get_user_input(fd, &len, &duration, &bpm), WRONG_COMPILATION_LEN);
     fclose(fd);
 
     fd = fopen(USER_INPUT_ERR2_PATH, "r");
-    EXPECT_TRUE(fd);
-    ASSERT_EQ(get_user_input(fd, &len, &duration, &bpm), -1);
+    ASSERT_TRUE(fd);
+    ASSERT_EQ(get_user_input(fd, &len, &duration, &bpm), WRONG_DURATION_INPUT);
     fclose(fd);
 
     fd = fopen(USER_INPUT_ERR3_PATH, "r");
-    EXPECT_TRUE(fd);
-    ASSERT_EQ(get_user_input(fd, &len, &duration, &bpm), -1);
+    ASSERT_TRUE(fd);
+    ASSERT_EQ(get_user_input(fd, &len, &duration, &bpm), WRONG_BPM_INPUT);
     fclose(fd);
 }
 

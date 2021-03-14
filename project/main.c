@@ -9,17 +9,25 @@
 #define PATH "./data/compositions.txt"
 #define SEED 6339
 
+enum errors {
+    ERROR_FILE,
+    ERROR_READ_DATA,
+    ERROR_WRONG_INPUT,
+    ERROR_SEARCH,
+    ERROR_COMPILATION_GEN
+};
+
 int main() {
     FILE *fd = fopen(PATH, "r");
     if (fd == NULL) {
         fprintf(stderr, "File open error\n");
-        return -1;
+        return ERROR_FILE;
     }
 
     FILE *fd_input = fopen(USER_INPUT, "r");
     if (fd_input == NULL) {
         fclose(fd);
-        return -1;
+        return ERROR_FILE;
     }
 
     playlist_t *all_composition = read_data(fd);
@@ -27,7 +35,7 @@ int main() {
         fprintf(stderr, "Error reading playlist from file\n");
         fclose(fd);
         fclose(fd_input);
-        return -1;
+        return ERROR_READ_DATA;
     }
 
     size_t amount;
@@ -38,7 +46,7 @@ int main() {
         delete_playlist(all_composition);
         fclose(fd);
         fclose(fd_input);
-        return -1;
+        return ERROR_WRONG_INPUT;
     }
 
     playlist_t *suitable_compositions = search(all_composition, duration, bpm);
@@ -47,7 +55,7 @@ int main() {
         delete_playlist(all_composition);
         fclose(fd);
         fclose(fd_input);
-        return -1;
+        return ERROR_SEARCH;
     }
 
     playlist_t *result_compilation = gen_compilation(suitable_compositions, amount, SEED);
@@ -57,7 +65,7 @@ int main() {
         delete_playlist(all_composition);
         delete_playlist(suitable_compositions);
         fclose(fd_input);
-        return -1;
+        return ERROR_COMPILATION_GEN;
     }
 
     printf("Final selection\n");

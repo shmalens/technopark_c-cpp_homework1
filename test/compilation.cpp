@@ -15,10 +15,10 @@ extern "C" {
 
 TEST(CompilationTest, Search_OK) {
     FILE *fd = fopen(DATA_PATH, "r");
-    EXPECT_TRUE(fd);
+    ASSERT_TRUE(fd);
 
     playlist_t *playlist = read_data(fd);
-    EXPECT_TRUE(playlist);
+    ASSERT_TRUE(playlist);
 
     playlist_t *search_res = search(playlist, TEST_LIMIT, TEST_BPM);
     ASSERT_TRUE(search_res);
@@ -39,13 +39,13 @@ TEST(CompilationTest, Search_Err) {
 
 TEST(CompilationTest, GenCompilation_OK) {
     FILE *fd = fopen(DATA_PATH, "r");
-    EXPECT_TRUE(fd);
+    ASSERT_TRUE(fd);
 
     playlist_t *playlist = read_data(fd);
-    EXPECT_TRUE(playlist);
+    ASSERT_TRUE(playlist);
 
     playlist_t *search_res = search(playlist, TEST_LIMIT, TEST_BPM);
-    EXPECT_TRUE(search_res);
+    ASSERT_TRUE(search_res);
 
     playlist_t *compilation = gen_compilation(search_res, 1, 1);
     ASSERT_TRUE(compilation);
@@ -62,6 +62,13 @@ TEST(CompilationTest, GenCompilation_Err) {
     ASSERT_FALSE(gen_compilation(NULL, TEST_LIMIT, 1));
     playlist_t playlist;
     playlist.len = 1;
+    ASSERT_FALSE(gen_compilation(&playlist, TEST_LIMIT, 1));
+
+    playlist.len = 0;
+    ASSERT_FALSE(gen_compilation(&playlist, TEST_LIMIT, 1));
+
+    playlist.len = 1;
+    playlist.compositions = NULL;
     ASSERT_FALSE(gen_compilation(&playlist, TEST_LIMIT, 1));
 }
 

@@ -11,7 +11,7 @@ playlist_t *create_playlist(size_t start_capacity) {
     }
 
     if (start_capacity == 0) {
-        start_capacity += 1;
+        start_capacity = 1;
     }
 
     new_playlist->compositions = malloc(sizeof(composition_t *) * (start_capacity));
@@ -55,14 +55,18 @@ static composition_t **resize_playlist(composition_t **src, size_t *capacity) {
 }
 
 int add_composition(playlist_t *playlist, composition_t *composition) {
-    if (playlist == NULL || composition == NULL) {
-        return -1;
+    if (playlist == NULL) {
+        return EMPTY_PLAYLIST_POINTER;
+    }
+
+    if (composition == NULL) {
+        return EMPTY_COMPOSITION_POINTER;
     }
 
     if (playlist->len == playlist->capacity) {
         composition_t **resized = resize_playlist(playlist->compositions, &(playlist->capacity));
         if (resized == NULL) {
-            return -2;
+            return RESIZING_ERROR;
         }
 
         playlist->compositions = resized;
@@ -70,7 +74,7 @@ int add_composition(playlist_t *playlist, composition_t *composition) {
 
     composition_t *new_composition = composition_cpy(composition);
     if (new_composition == NULL) {
-        return -3;
+        return COMP_COPY_ERROR;
     }
 
     playlist->compositions[playlist->len] = new_composition;
