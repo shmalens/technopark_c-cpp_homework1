@@ -21,15 +21,13 @@ set(TARGET compilation)
 # Создаем таргет, указываем для него мейн
 add_executable(${TARGET} ${PROJECT_SOURCE_DIR}/main.c)
 # Подключаем к нему хедеры
-set(PROJECT_SOURCE_DIR project)
-include_directories(${PROJECT_SOURCE_DIR}/include)
-set(SRC ${PROJECT_SOURCE_DIR}/src)
+include_directories(project/include)
 
 # Теперь делаем статическую библиотеку со всеми сорсами
-add_library(hw_lib STATIC ${SRC}/compilation.c
-        ${SRC}/composition.c
-        ${SRC}/dataloader.c
-        ${SRC}/playlist.c)
+add_library(hw_lib STATIC project/src/compilation.c
+        project/src/composition.c
+        project/src/dataloader.c
+        project/src/playlist.c)
 
 # Подключаем библиотеку к цели
 target_link_libraries(${TARGET} hw_lib)
