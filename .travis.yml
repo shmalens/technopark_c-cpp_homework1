@@ -2,22 +2,60 @@ os: linux
 compiler:
     - gcc
 
-r_check_args: '--use-valgrind'
-addons:
-    apt:
-        packages:
-            - valgrind
+env:
+    global:
+        - LINUX_DIST=xenial
 
-install:
-    - sudo apt-get install -qq cppcheck
-
-script:
-    - ./run_cppcheck.sh
+before_script:
     - mkdir build
     - cd build
-    - cmake ..
-    - make
-    - ctest
-    - ls -la
-    - cd ..
-    - ./run_valgrind.sh
+    - |
+        if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+          mkdir -p external/cmake
+          pushd external/cmake
+          wget https://cmake.org/files/v3.8/cmake-3.8.0-Linux-x86_64.sh
+          chmod +x cmake-*-Linux-x86_64.sh
+          ./cmake-*-Linux-x86_64.sh --exclude-subdir --skip-license
+          export PATH="${PWD}/bin:$PATH"
+          popd
+        else
+          if ! brew ls --version cmake &>/dev/null; then brew update; brew install cmake; fi
+        fi
+
+matrix:
+    include:
+        - os: linux
+          env:
+              - TEST="cppcheck"
+          addons:
+              apt:
+                  sources:
+                      - ubuntu-toolchain-r-test
+                  packages:
+                      - gcc-6
+                      - g++-6
+          script:
+              - cmake -DENABLE_CPPCHECK=ON ..
+              - make
+              - make check1 && make check2
+
+
+#r_check_args: '--use-valgrind'
+#addons:
+#    apt:
+#        packages:
+#            - valgrind
+#
+#install:
+#    - sudo apt-get install -qq cppcheck
+#
+#script:
+#    - ./run_cppcheck.sh
+#    - mkdir build
+#    - cd build
+#    - cmake ..
+#    - make
+#    - ctest
+#    - ls -la
+#    - cd ..
+#    - ./run_valgrind.sh
