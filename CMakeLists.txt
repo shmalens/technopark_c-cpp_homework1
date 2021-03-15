@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.8)
 project(HomeWork1)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wabi -Wall -ggdb3")
+set(CMAKE_CXX_FLAGS "-std=c++0x -Wall -ggdb3")
 
 include_directories(project/include)
 include_directories(SYSTEM ${CMAKE_BINARY_DIR}/include)
@@ -31,7 +31,7 @@ if (ENABLE_COVERAGE)
 endif ()
 
 option(ENABLE_CPPCHECK "Configure and run cppcheck." OFF) # Makes boolean 'test' available.
-if(ENABLE_CPPCHECK)
+if (ENABLE_CPPCHECK)
 
     list(APPEND CPPCHECK_CMAKE_ARGS
             "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
@@ -39,16 +39,16 @@ if(ENABLE_CPPCHECK)
 
     ExternalProject_Add(
             cppcheck
-            GIT_REPOSITORY      https://github.com/danmar/cppcheck.git
-            GIT_TAG             1.79
-            GIT_SHALLOW         1
-            CMAKE_ARGS          ${CPPCHECK_CMAKE_ARGS}
-            PREFIX              ${CMAKE_BINARY_DIR}/external/cppcheck/prefix
-            TMP_DIR             ${CMAKE_BINARY_DIR}/external/cppcheck/tmp
-            STAMP_DIR           ${CMAKE_BINARY_DIR}/external/cppcheck/stamp
-            DOWNLOAD_DIR        ${CMAKE_BINARY_DIR}/external/cppcheck/download
-            SOURCE_DIR          ${CMAKE_BINARY_DIR}/external/cppcheck/src
-            BINARY_DIR          ${CMAKE_BINARY_DIR}/external/cppcheck/build
+            GIT_REPOSITORY https://github.com/danmar/cppcheck.git
+            GIT_TAG 1.79
+            GIT_SHALLOW 1
+            CMAKE_ARGS ${CPPCHECK_CMAKE_ARGS}
+            PREFIX ${CMAKE_BINARY_DIR}/external/cppcheck/prefix
+            TMP_DIR ${CMAKE_BINARY_DIR}/external/cppcheck/tmp
+            STAMP_DIR ${CMAKE_BINARY_DIR}/external/cppcheck/stamp
+            DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/external/cppcheck/download
+            SOURCE_DIR ${CMAKE_BINARY_DIR}/external/cppcheck/src
+            BINARY_DIR ${CMAKE_BINARY_DIR}/external/cppcheck/build
     )
 
     list(APPEND CPPCHECK_ARGS1
@@ -81,7 +81,7 @@ if(ENABLE_CPPCHECK)
             COMMENT "running cppcheck"
     )
 
-endif()
+endif ()
 
 
 ## Создаем таргет, указываем для него мейн
@@ -109,18 +109,21 @@ endif()
 ## Включаем тестирование для этого каталога
 
 
-#option(BUILD_TESTS "Build all tests." OFF) # Makes boolean 'test' available.
-#
-#if (BUILD_TESTS)
-#enable_testing()
-#
-#file(GLOB test_source test/composition.cpp test/playlist.cpp test/dataloader.cpp test/compilation.cpp)
-#
-#foreach(file ${test_source})
-#    set(name)
-#    get_filename_component(name ${file} NAME_WE)
-#    add_executable("${name}_tests" ${file})
-#    target_link_libraries("${name}_tests" gtest_main)
-#    target_link_libraries("${name}_tests" hw_lib)
-#    add_test(NAME ${name} COMMAND "${name}_tests")
-#endforeach()
+option(BUILD_TESTS "Build all tests." OFF) # Makes boolean 'test' available.
+if (BUILD_TESTS)
+    add_subdirectory(googletest-release-1.10.0)
+    include(CTest)
+
+    enable_testing()
+
+    file(GLOB test_source test/composition.cpp test/playlist.cpp test/dataloader.cpp test/compilation.cpp)
+
+    foreach (file ${test_source})
+        set(name)
+        get_filename_component(name ${file} NAME_WE)
+        add_executable("${name}_tests" ${file})
+        target_link_libraries("${name}_tests" gtest_main)
+        target_link_libraries("${name}_tests" hw_lib)
+        add_test(NAME ${name} COMMAND "${name}_tests")
+    endforeach ()
+endif ()
