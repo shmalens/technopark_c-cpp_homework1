@@ -107,6 +107,11 @@ endif()
 #        ${CMAKE_BINARY_DIR}/googletest-build)
 #
 ## Включаем тестирование для этого каталога
+
+
+#option(BUILD_TESTS "Build all tests." OFF) # Makes boolean 'test' available.
+#
+#if (BUILD_TESTS)
 #enable_testing()
 #
 #file(GLOB test_source test/composition.cpp test/playlist.cpp test/dataloader.cpp test/compilation.cpp)
