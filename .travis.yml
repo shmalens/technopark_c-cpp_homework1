@@ -51,6 +51,8 @@ matrix:
             - g++-6
             - valgrind
       script:
+        - cmake ..
+        - make
         - cd ..
         - ./run_valgrind.sh
 
