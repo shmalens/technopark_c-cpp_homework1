@@ -19,7 +19,7 @@ set(TARGET compilation)
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 
 # Создаем таргет, указываем для него мейн
-add_executable(${TARGET} ${PROJECT_SOURCE_DIR}/main.c)
+add_executable(${TARGET} project/main.c)
 # Подключаем к нему хедеры
 include_directories(project/include)
 
