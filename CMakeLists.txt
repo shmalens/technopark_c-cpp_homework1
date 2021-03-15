@@ -15,7 +15,8 @@ find_package(Git REQUIRED)
 add_library(hw_lib STATIC project/src/compilation.c
         project/src/composition.c
         project/src/dataloader.c
-        project/src/playlist.c)
+        project/src/playlist.c
+        project/src/processing.c)
 
 set(TARGET compilation)
 add_executable(${TARGET} project/main.c)
@@ -85,12 +86,23 @@ endif ()
 
 option(BUILD_TESTS "Build all tests." OFF) # Makes boolean 'test' available.
 if (BUILD_TESTS)
-    add_subdirectory(googletest-release-1.10.0)
-    include(CTest)
+    configure_file(CMakeLists.txt.in
+            googletest-download/CMakeLists.txt)
+    execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
+    execute_process(COMMAND ${CMAKE_COMMAND} --build .
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
+
+    add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
+            ${CMAKE_BINARY_DIR}/googletest-build)
 
     enable_testing()
 
-    file(GLOB test_source test/composition.cpp test/playlist.cpp test/dataloader.cpp test/compilation.cpp)
+    file(GLOB test_source test/composition.cpp
+                          test/playlist.cpp
+                          test/dataloader.cpp
+                          test/compilation.cpp
+                          test/processing.cpp)
 
     foreach (file ${test_source})
         set(name)

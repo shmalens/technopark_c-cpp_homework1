@@ -1,20 +1,15 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "playlist.h"
-#include "dataloader.h"
-#include "compilation.h"
+#include "processing.h"
 
 #define USER_INPUT "./data/user_input.txt"
 #define PATH "./data/compositions.txt"
-#define SEED 6339
 
 enum errors {
-    ERROR_FILE,
-    ERROR_READ_DATA,
-    ERROR_WRONG_INPUT,
-    ERROR_SEARCH,
-    ERROR_COMPILATION_GEN
+    ERROR_FILE = 1,
+    ERROR_DATA_INPUT,
+    ERROR_DATA_PROCESSING
 };
 
 int main() {
@@ -26,55 +21,28 @@ int main() {
 
     FILE *fd_input = fopen(USER_INPUT, "r");
     if (fd_input == NULL) {
-        fclose(fd);
+        free_recourses(fd, NULL, NULL, NULL);
         return ERROR_FILE;
     }
 
-    playlist_t *all_composition = read_data(fd);
-    if (all_composition == NULL) {
-        fprintf(stderr, "Error reading playlist from file\n");
-        fclose(fd);
-        fclose(fd_input);
-        return ERROR_READ_DATA;
+    playlist_t *all_composition = NULL;
+    size_t amount = 0;
+    size_t duration = 0;
+    unsigned int bpm = 0;
+    if (data_input(fd, fd_input, &all_composition, &amount, &duration, &bpm) != 0) {
+        free_recourses(fd, fd_input, NULL, NULL);
+        return ERROR_DATA_INPUT;
     }
 
-    size_t amount;
-    size_t duration;
-    unsigned int bpm;
-    if (get_user_input(fd_input, &amount, &duration, &bpm) != 0) {
-        fprintf(stderr, "Data entry error\n");
-        delete_playlist(all_composition);
-        fclose(fd);
-        fclose(fd_input);
-        return ERROR_WRONG_INPUT;
-    }
-
-    playlist_t *suitable_compositions = search(all_composition, duration, bpm);
-    if (suitable_compositions == NULL) {
-        fprintf(stderr, "Unable to create playlist\n");
-        delete_playlist(all_composition);
-        fclose(fd);
-        fclose(fd_input);
-        return ERROR_SEARCH;
-    }
-
-    playlist_t *result_compilation = gen_compilation(suitable_compositions, amount, SEED);
+    playlist_t *result_compilation = data_processing(all_composition, duration, amount, bpm);
     if (result_compilation == NULL) {
-        fprintf(stderr, "It is impossible to create a playlist from suitable\n");
-        fclose(fd);
-        delete_playlist(all_composition);
-        delete_playlist(suitable_compositions);
-        fclose(fd_input);
-        return ERROR_COMPILATION_GEN;
+        free_recourses(fd, fd_input, all_composition, NULL);
+        return ERROR_DATA_PROCESSING;
     }
 
     printf("Final selection\n");
     print_playlist(stdout, result_compilation);
 
-    fclose(fd);
-    fclose(fd_input);
-    delete_playlist(all_composition);
-    delete_playlist(suitable_compositions);
-    delete_playlist(result_compilation);
+    free_recourses(fd, fd_input, all_composition, result_compilation);
     return 0;
 };
