@@ -49,7 +49,7 @@ matrix:
                   packages:
                       - gcc-6
                       - g++-6
-        script:
+          script:
             - cmake -DENABLE_COVERAGE=ON ..
             - make
             - cd ..
