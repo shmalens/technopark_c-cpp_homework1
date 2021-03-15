@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 project(HomeWork1)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "-std=c++0x -Wall -ggdb3")
@@ -82,32 +82,6 @@ if (ENABLE_CPPCHECK)
     )
 
 endif ()
-
-
-## Создаем таргет, указываем для него мейн
-#add_executable(${TARGET} project/main.c)
-## Подключаем к нему хедеры
-#
-## Теперь делаем статическую библиотеку со всеми сорсами
-#
-#
-## Подключаем библиотеку к цели
-#target_link_libraries(${TARGET} hw_lib)
-#
-## Тут происходит конфигурация тестов,
-## они подтягиваются с гита, для этого нужен CMakeLists.txt.in
-#configure_file(CMakeLists.txt.in
-#        googletest-download/CMakeLists.txt)
-#execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-#        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
-#execute_process(COMMAND ${CMAKE_COMMAND} --build .
-#        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download)
-#
-#add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
-#        ${CMAKE_BINARY_DIR}/googletest-build)
-#
-## Включаем тестирование для этого каталога
-
 
 option(BUILD_TESTS "Build all tests." OFF) # Makes boolean 'test' available.
 if (BUILD_TESTS)
