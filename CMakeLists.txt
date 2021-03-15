@@ -21,8 +21,8 @@ set(TARGET compilation)
 # Создаем таргет, указываем для него мейн
 add_executable(${TARGET} ${PROJECT_SOURCE_DIR}/main.c)
 # Подключаем к нему хедеры
+set(PROJECT_SOURCE_DIR project)
 include_directories(${PROJECT_SOURCE_DIR}/include)
-
 set(SRC ${PROJECT_SOURCE_DIR}/src)
 
 # Теперь делаем статическую библиотеку со всеми сорсами
