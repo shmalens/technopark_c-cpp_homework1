@@ -1,1 +1,6 @@
+#executable files
+cmake-build-debug
+.idea
 *.out
+/build/*
+cmake_copy
